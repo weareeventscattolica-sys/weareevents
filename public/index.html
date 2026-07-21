@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+<h2>WhatsApp Inbox</h2>
+
+<div id="chat"></div>
+
+<input id="phone" placeholder="Numero cliente">
+<br>
+
+<textarea id="text" placeholder="Scrivi messaggio"></textarea>
+
+<br>
+
+<button onclick="send()">
+Invia
+</button>
+
+<script>
+
+async function load(){
+
+let r = await fetch("/messages");
+
+let data = await r.json();
+
+document.getElementById("chat").innerHTML =
+data.map(x =>
+
+`
+<p>
+<b>${x.phone}</b><br>
+${x.message}<br>
+(${x.type})
+</p>
+<hr>
+`
+
+).join("");
+
+}
+
+
+async function send(){
+
+await fetch("/send", {
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+phone:
+document.getElementById("phone").value,
+
+text:
+document.getElementById("text").value
+
+})
+
+});
+
+
+load();
+
+}
+
+
+setInterval(load,3000);
+
+load();
+
+</script>
+
+</body>
+
+</html>
